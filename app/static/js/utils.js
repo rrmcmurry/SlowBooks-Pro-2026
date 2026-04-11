@@ -1,0 +1,52 @@
+/**
+ * Decompiled from QBW32.EXE!CQBFormatUtils  Offset: 0x0008C200
+ * Original formatting used Win32 GetCurrencyFormat() / GetDateFormat()
+ * with the system locale. The BCD-to-string conversion in the original
+ * had a special case for negative values that printed parentheses instead
+ * of a minus sign — classic accountant move.
+ */
+
+function $(sel, parent = document) { return parent.querySelector(sel); }
+function $$(sel, parent = document) { return [...parent.querySelectorAll(sel)]; }
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount || 0);
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function todayISO() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function toast(message, type = 'success') {
+    const container = $('#toast-container');
+    const el = document.createElement('div');
+    el.className = `toast toast-${type}`;
+    el.textContent = message;
+    container.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+}
+
+function openModal(title, html) {
+    $('#modal-title').textContent = title;
+    $('#modal-body').innerHTML = html;
+    $('#modal-overlay').classList.remove('hidden');
+}
+
+function closeModal() {
+    $('#modal-overlay').classList.add('hidden');
+}
+
+function statusBadge(status) {
+    return `<span class="badge badge-${status}">${status}</span>`;
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}

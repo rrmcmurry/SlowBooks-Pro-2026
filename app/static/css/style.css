@@ -1,0 +1,956 @@
+/* ============================================================================
+ * Slowbooks Pro 2026 — UI Stylesheet
+ * Reconstructed from QBW32.EXE resource table (RT_RCDATA "QBSKIN")
+ * Original skin engine: CQBSkinManager at offset 0x00260000
+ * Color palette extracted from QB2003 "Default Blue" theme (SKIN_BLUE.DAT)
+ * ============================================================================
+ * BUILD NOTE: The yellow invoice texture (RT_BITMAP 0x012C) was a 4x4 px
+ * tiled BMP in the original. We recreated it as a CSS gradient. Close enough.
+ * ============================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Tahoma&display=swap');
+
+:root {
+    /* -- QB2003 "Default Blue" skin palette (extracted via Resource Hacker) -- */
+    --qb-navy:        #003366;
+    --qb-navy-dark:   #002244;
+    --qb-navy-mid:    #004488;
+    --qb-blue:        #336699;
+    --qb-blue-light:  #4a7fb5;
+    --qb-blue-accent: #5b9bd5;
+    --qb-teal:        #669999;
+    --qb-green:       #339966;
+    --qb-green-dark:  #2d7d56;
+    --qb-gold:        #cc9933;
+    --qb-red:         #cc3333;
+    --qb-orange:      #cc6633;
+
+    /* -- Form backgrounds (the famous tinted papers) -- */
+    --invoice-bg:     #fffef5;    /* yellow tint — RT_BITMAP 0x012C */
+    --estimate-bg:    #f5fff8;    /* green tint — RT_BITMAP 0x012D */
+    --form-bg:        #f7f8fa;
+
+    /* -- Chrome colors -- */
+    --toolbar-bg:     #d6dfe8;
+    --toolbar-border: #a8b8c8;
+    --content-bg:     #eef1f5;
+    --panel-bg:       #ffffff;
+    --panel-border:   #c0c8d0;
+    --input-border:   #7f9db9;
+    --input-focus:    #3366cc;
+
+    /* -- Text -- */
+    --text-primary:   #1a1a2e;
+    --text-secondary: #4a4a6a;
+    --text-muted:     #7a7a9a;
+    --text-light:     #9a9ab0;
+    --text-on-dark:   #e8ecf0;
+    --text-on-navy:   #c8d8e8;
+
+    /* -- Functional -- */
+    --success:        #339966;
+    --warning:        #cc9933;
+    --danger:         #cc3333;
+
+    --sidebar-width: 200px;
+    --topbar-height: 40px;
+    --statusbar-height: 24px;
+    --font: Tahoma, 'Segoe UI', Geneva, Verdana, sans-serif;
+    --font-mono: 'Consolas', 'Courier New', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font);
+    background: var(--content-bg);
+    color: var(--text-primary);
+    font-size: 12px;
+    line-height: 1.4;
+    overflow: hidden;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* ========================================================================
+ * TOP BAR — Reconstructed from CQBMenuBar + CQBToolBar
+ * Original was a CToolBarCtrl with 24x24 toolbar buttons (IDB_TOOLBAR)
+ * ======================================================================== */
+
+#topbar {
+    height: var(--topbar-height);
+    background: linear-gradient(180deg, #e8edf2 0%, #c8d0dc 100%);
+    border-bottom: 1px solid #a0a8b8;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 2px;
+    flex-shrink: 0;
+    z-index: 110;
+}
+
+.topbar-brand {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--qb-navy);
+    margin-right: 16px;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.topbar-brand span {
+    font-weight: 400;
+    color: var(--text-muted);
+    font-size: 10px;
+    margin-left: 4px;
+}
+
+.tb-sep {
+    width: 1px;
+    height: 22px;
+    background: #b0b8c4;
+    margin: 0 4px;
+}
+
+.tb-btn {
+    padding: 3px 10px;
+    font-size: 11px;
+    font-family: var(--font);
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.tb-btn:hover {
+    background: rgba(255,255,255,0.6);
+    border-color: #b0b8c8;
+}
+
+.tb-btn:active {
+    background: rgba(0,0,0,0.05);
+}
+
+.topbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.topbar-clock {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+}
+
+/* ========================================================================
+ * SIDEBAR / NAVIGATOR — CQBNavigator "Icon Bar"
+ * Original: left-docked panel with 32x32 icons in a vertical CToolBarCtrl
+ * Colors from SKIN_BLUE.DAT NavPanel section
+ * ======================================================================== */
+
+#main-area {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+#sidebar {
+    width: var(--sidebar-width);
+    background: linear-gradient(180deg, var(--qb-navy) 0%, var(--qb-navy-dark) 100%);
+    color: white;
+    flex-shrink: 0;
+    overflow-y: auto;
+    border-right: 1px solid #001a33;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 14px 14px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.15);
+}
+
+.sidebar-header h1 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.03em;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.sidebar-edition {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--qb-gold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 4px 0;
+    flex: 1;
+}
+
+.nav-section {
+    padding: 10px 14px 3px;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--qb-teal);
+    font-weight: 700;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    color: var(--text-on-navy);
+    text-decoration: none;
+    font-size: 11px;
+    transition: background 0.1s;
+    border-left: 3px solid transparent;
+}
+
+.nav-link:hover {
+    background: rgba(255,255,255,0.08);
+    color: #ffffff;
+}
+
+.nav-link.active {
+    background: rgba(255,255,255,0.12);
+    color: #ffffff;
+    border-left-color: var(--qb-gold);
+    font-weight: 700;
+}
+
+.nav-icon {
+    width: 16px;
+    text-align: center;
+    font-size: 11px;
+    opacity: 0.7;
+}
+
+.nav-link.active .nav-icon { opacity: 1; }
+
+.sidebar-footer {
+    padding: 8px 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 9px;
+    color: rgba(255,255,255,0.25);
+    text-align: center;
+    user-select: none;
+}
+
+/* ========================================================================
+ * CONTENT AREA
+ * ======================================================================== */
+
+#content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+    background: var(--content-bg);
+}
+
+#page-content {
+    max-width: 1100px;
+}
+
+/* ========================================================================
+ * STATUS BAR — CQBStatusBar at bottom of CMainFrame
+ * Original showed: "Ready" | Company file path | Current date
+ * ======================================================================== */
+
+#statusbar {
+    height: var(--statusbar-height);
+    background: linear-gradient(180deg, #e0e4ea 0%, #c8ccd4 100%);
+    border-top: 1px solid #a8acb4;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 10px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    gap: 16px;
+}
+
+.status-section {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.status-sep {
+    width: 1px;
+    height: 14px;
+    background: #b0b4bc;
+}
+
+.status-right {
+    margin-left: auto;
+}
+
+/* ========================================================================
+ * PAGE HEADERS — QuickBooks used a colored bar at the top of each view
+ * ======================================================================== */
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: linear-gradient(180deg, #f0f3f7 0%, #e0e4ec 100%);
+    border: 1px solid var(--panel-border);
+    border-radius: 3px;
+}
+
+.page-header h2 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--qb-navy);
+}
+
+/* ========================================================================
+ * BUTTONS — Reconstructed from CQBButton custom control
+ * Original had a subtle 3D bevel effect (Windows Classic theme)
+ * ======================================================================== */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    border: 1px solid #7f9db9;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 400;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: all 0.1s;
+    background: linear-gradient(180deg, #ffffff 0%, #e8ecf0 100%);
+    color: var(--text-primary);
+}
+
+.btn:hover {
+    background: linear-gradient(180deg, #f0f4f8 0%, #d8dce4 100%);
+    border-color: #5f7d99;
+}
+
+.btn:active {
+    background: linear-gradient(180deg, #d0d4d8 0%, #e0e4e8 100%);
+}
+
+.btn-primary {
+    background: linear-gradient(180deg, var(--qb-blue-light) 0%, var(--qb-blue) 100%);
+    color: white;
+    border-color: var(--qb-navy);
+    font-weight: 700;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(180deg, var(--qb-blue) 0%, var(--qb-navy-mid) 100%);
+}
+
+.btn-secondary {
+    background: linear-gradient(180deg, #ffffff 0%, #e8ecf0 100%);
+    color: var(--text-primary);
+    border-color: #7f9db9;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(180deg, #f0f4f8 0%, #d8dce4 100%);
+}
+
+.btn-danger {
+    background: linear-gradient(180deg, #e05555 0%, var(--qb-red) 100%);
+    color: white;
+    border-color: #992222;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(180deg, var(--qb-red) 0%, #aa2222 100%);
+}
+
+.btn-sm {
+    padding: 2px 8px;
+    font-size: 10px;
+}
+
+.btn-group {
+    display: flex;
+    gap: 4px;
+}
+
+/* ========================================================================
+ * TABLES — CListCtrl in Report View mode
+ * QB2003 used alternating row colors and thin column separators
+ * ======================================================================== */
+
+.table-container {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 0;
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead th {
+    background: linear-gradient(180deg, #e8ecf2 0%, #d0d8e0 100%);
+    padding: 4px 10px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--panel-border);
+    border-right: 1px solid #d8dce4;
+    white-space: nowrap;
+}
+
+thead th:last-child { border-right: none; }
+
+tbody td {
+    padding: 3px 10px;
+    border-bottom: 1px solid #e8ecf0;
+    font-size: 11px;
+    border-right: 1px solid #f0f2f4;
+}
+
+tbody td:last-child { border-right: none; }
+
+tbody tr:nth-child(even) { background: #f7f9fb; }
+tbody tr:hover { background: #e8f0f8; }
+tbody tr:last-child td { border-bottom: none; }
+
+td.actions {
+    text-align: right;
+    white-space: nowrap;
+}
+
+td.amount, th.amount {
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ========================================================================
+ * CARDS — used on Dashboard and Bank Accounts
+ * Styled to match QB2003's "Company Snapshot" panel
+ * ======================================================================== */
+
+.card {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 0;
+    padding: 12px 14px;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.06);
+}
+
+.card-header {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--qb-navy);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #e0e4ec;
+}
+
+.card-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--qb-navy);
+    font-family: var(--font-mono);
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+/* ========================================================================
+ * FORMS — Modal forms styled like QB2003 data entry windows
+ * The original forms had a light blue/gray gradient background with
+ * sunken 3D edit controls (WS_EX_CLIENTEDGE)
+ * ======================================================================== */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 4px 6px;
+    border: 1px solid var(--input-border);
+    border-radius: 0;
+    font-size: 11px;
+    font-family: var(--font);
+    color: var(--text-primary);
+    background: #ffffff;
+    /* WS_EX_CLIENTEDGE sunken effect */
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.12);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    background: #fffff8;
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.08);
+}
+
+.form-group textarea {
+    min-height: 50px;
+    resize: vertical;
+}
+
+.form-group select {
+    box-shadow: none;
+    background: linear-gradient(180deg, #ffffff 0%, #f0f2f4 100%);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #d0d4dc;
+}
+
+/* ========================================================================
+ * BADGES — Status indicators
+ * Original used colored text in the CListCtrl, no pill shapes
+ * We kept the pills because they look better, but matched the colors
+ * ======================================================================== */
+
+.badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 2px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.badge-draft   { background: #e8ecf0; color: #4a5568; border: 1px solid #c8ccd4; }
+.badge-sent    { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+.badge-partial { background: #fef3c7; color: #92400e; border: 1px solid #fbbf24; }
+.badge-paid    { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+.badge-void    { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.badge-pending { background: #fef3c7; color: #92400e; border: 1px solid #fbbf24; }
+.badge-accepted{ background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+.badge-rejected{ background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.badge-converted{background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+.badge-product { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+.badge-service { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+.badge-material{ background: #fef3c7; color: #92400e; border: 1px solid #fbbf24; }
+.badge-labor   { background: #ede9fe; color: #5b21b6; border: 1px solid #c4b5fd; }
+
+/* ========================================================================
+ * MODAL — Mimics QB2003's popup data entry windows
+ * Original used WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU dialog style
+ * ======================================================================== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,20,50,0.45);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 40px;
+    z-index: 200;
+}
+
+.modal-overlay.hidden { display: none; }
+
+.modal {
+    background: var(--form-bg);
+    border: 2px solid var(--qb-navy);
+    border-radius: 0;
+    width: 90%;
+    max-width: 700px;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    background: linear-gradient(180deg, var(--qb-blue-light) 0%, var(--qb-navy) 100%);
+    color: white;
+}
+
+.modal-header h2 {
+    font-size: 12px;
+    font-weight: 700;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: rgba(255,255,255,0.7);
+    padding: 2px 4px;
+    line-height: 1;
+}
+.modal-close:hover { color: #ffffff; }
+
+#modal-body {
+    padding: 14px 16px;
+}
+
+/* ========================================================================
+ * TOAST NOTIFICATIONS
+ * ======================================================================== */
+
+#toast-container {
+    position: fixed;
+    bottom: calc(var(--statusbar-height) + 8px);
+    right: 12px;
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.toast {
+    padding: 6px 14px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+    animation: toast-in 0.2s ease;
+    border: 1px solid rgba(0,0,0,0.2);
+}
+
+.toast-success { background: var(--qb-green); }
+.toast-error   { background: var(--qb-red); }
+.toast-info    { background: var(--qb-blue); }
+
+@keyframes toast-in {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* ========================================================================
+ * DASHBOARD — "Company Snapshot" style
+ * ======================================================================== */
+
+.dashboard-section {
+    margin-bottom: 16px;
+}
+
+.dashboard-section h3 {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--qb-navy);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 2px solid var(--qb-gold);
+}
+
+/* ========================================================================
+ * LINE ITEMS TABLE — The invoice/estimate grid
+ * QB2003 used CQBGridCtrl, a custom owner-draw CListCtrl subclass
+ * ======================================================================== */
+
+.line-items-table {
+    width: 100%;
+    margin-top: 8px;
+    border: 1px solid var(--panel-border);
+}
+
+.line-items-table th {
+    font-size: 9px;
+    padding: 3px 6px;
+    background: linear-gradient(180deg, #e8ecf2 0%, #d0d8e0 100%);
+    border-right: 1px solid #d8dce4;
+}
+
+.line-items-table th:last-child { border-right: none; }
+
+.line-items-table td {
+    padding: 2px 4px;
+    border-right: 1px solid #e8ecf0;
+    border-bottom: 1px solid #e8ecf0;
+}
+
+.line-items-table td:last-child { border-right: none; }
+
+.line-items-table input,
+.line-items-table select {
+    width: 100%;
+    padding: 2px 4px;
+    border: 1px solid var(--input-border);
+    border-radius: 0;
+    font-size: 11px;
+    font-family: var(--font);
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.08);
+}
+
+.line-items-table .col-qty    { width: 60px; }
+.line-items-table .col-rate   { width: 80px; }
+.line-items-table .col-amount { width: 80px; text-align: right; }
+.line-items-table .col-actions{ width: 30px; text-align: center; }
+
+.invoice-totals {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid var(--panel-border);
+}
+
+.total-row {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+}
+
+.total-row .label {
+    color: var(--text-secondary);
+    min-width: 80px;
+    text-align: right;
+    font-weight: 700;
+}
+
+.total-row .value {
+    min-width: 80px;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+.total-row.grand-total {
+    font-weight: 700;
+    font-size: 13px;
+    padding-top: 4px;
+    margin-top: 2px;
+    border-top: 2px solid var(--qb-navy);
+    color: var(--qb-navy);
+}
+
+/* ========================================================================
+ * EMPTY STATE
+ * ======================================================================== */
+
+.empty-state {
+    text-align: center;
+    padding: 30px 16px;
+    color: var(--text-muted);
+}
+
+.empty-state p {
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+/* ========================================================================
+ * TOOLBAR / FILTERS
+ * ======================================================================== */
+
+.toolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 4px 8px;
+    background: var(--toolbar-bg);
+    border: 1px solid var(--toolbar-border);
+}
+
+.toolbar input,
+.toolbar select {
+    padding: 3px 6px;
+    border: 1px solid var(--input-border);
+    border-radius: 0;
+    font-size: 11px;
+    font-family: var(--font);
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.08);
+}
+
+/* Clickable row */
+tr.clickable { cursor: pointer; }
+
+/* ========================================================================
+ * SPLASH / ABOUT DIALOG
+ * Reconstructed from CAboutDlg (IDD_ABOUTBOX resource id=0x0064)
+ * ======================================================================== */
+
+.splash-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,10,30,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    animation: splash-fade-in 0.3s ease;
+}
+
+.splash-overlay.hidden { display: none; }
+
+@keyframes splash-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.splash-box {
+    width: 420px;
+    background: linear-gradient(180deg, var(--qb-navy) 0%, #001a33 100%);
+    border: 3px solid var(--qb-gold);
+    box-shadow: 0 0 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    text-align: center;
+    padding: 30px 24px 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.splash-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--qb-gold), #ffcc66, var(--qb-gold));
+}
+
+.splash-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.03em;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    margin-bottom: 2px;
+}
+
+.splash-subtitle {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--qb-gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.splash-divider {
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--qb-gold), transparent);
+    margin: 0 auto 16px;
+}
+
+.splash-info {
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+.splash-info strong {
+    color: rgba(255,255,255,0.7);
+}
+
+.splash-legal {
+    font-size: 8px;
+    color: rgba(255,255,255,0.25);
+    line-height: 1.5;
+    margin-bottom: 16px;
+    padding: 0 16px;
+}
+
+.splash-btn {
+    padding: 6px 28px;
+    background: linear-gradient(180deg, var(--qb-gold) 0%, #b8862e 100%);
+    border: 1px solid #8a6420;
+    color: var(--qb-navy-dark);
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--font);
+    cursor: pointer;
+    border-radius: 2px;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.splash-btn:hover {
+    background: linear-gradient(180deg, #ddaa44 0%, var(--qb-gold) 100%);
+}
+
+/* ========================================================================
+ * SCROLLBAR STYLING — to match the Windows XP / Classic theme
+ * ======================================================================== */
+
+::-webkit-scrollbar { width: 14px; }
+::-webkit-scrollbar-track { background: #e8ecf0; }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #c0c8d0 0%, #a0a8b0 100%);
+    border: 1px solid #8890a0;
+}
+::-webkit-scrollbar-thumb:hover { background: #a0a8b4; }
+
+/* ========================================================================
+ * PRINT STYLES
+ * ======================================================================== */
+
+@media print {
+    #sidebar, #topbar, #statusbar, .btn, .modal-overlay, #toast-container { display: none !important; }
+    #content { margin: 0; padding: 0; }
+    body { background: white; }
+}
