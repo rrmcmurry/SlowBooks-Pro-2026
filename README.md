@@ -24,23 +24,50 @@ The codebase is annotated with "decompilation" comments referencing `QBW32.EXE` 
 
 ## Features
 
-- **Customer & Vendor Management** — Full contact info, billing/shipping addresses, terms, credit limits
-- **Items & Services** — Product, service, material, and labor types with default rates and linked accounts
-- **Invoices** — Create, edit, void. Auto-numbering, auto due-date from terms, dynamic line items, running totals
-- **Estimates** — Same structure as invoices, convertible to invoices
+### Invoicing & Payments
+- **Invoices** — Create, edit, duplicate, void, mark as sent. Auto-numbering, auto due-date from terms, dynamic line items with running totals. Print/PDF generation via WeasyPrint
+- **Estimates** — Full estimate workflow with convert-to-invoice (deep-copies all fields and line items)
 - **Payments** — Record payments with allocation across multiple invoices. Auto-updates invoice balances and status (draft/sent/partial/paid)
-- **Bank Accounts** — Register view with deposits and withdrawals, reconciliation support
-- **Chart of Accounts** — 39 seeded accounts (Contractor template), double-entry foundation
-- **Reports** — Profit & Loss, Balance Sheet, A/R Aging
-- **Dashboard** — Company Snapshot with receivables, overdue count, recent invoices/payments, bank balances
+- **Quick Entry Mode** — Batch invoice entry for paper invoice backlog. Save & Next (Ctrl+Enter) with running log of created invoices
+
+### Double-Entry Accounting
+- **Journal Entries** — Every invoice and payment automatically creates balanced journal entries (DR A/R, CR Income per line, CR Sales Tax). Void creates reversing entries
+- **Chart of Accounts** — 39 seeded accounts (Contractor template), 6 account types (asset, liability, equity, income, COGS, expense)
+- **Account Balances** — Updated in real-time as transactions post
+
+### Banking
+- **Bank Accounts** — Register view with deposits and withdrawals
+- **Bank Reconciliation** — Full workflow: enter statement balance, toggle cleared items, validate difference = $0, complete
+
+### Contacts & Items
+- **Customer & Vendor Management** — Full contact info, billing/shipping addresses, terms, credit limits
+- **Items & Services** — Product, service, material, and labor types with default rates and linked income/expense accounts
+
+### Reports
+- **Profit & Loss** — Income vs expenses for any date range
+- **Balance Sheet** — Assets, liabilities, and equity
+- **A/R Aging** — Outstanding receivables grouped by customer with 30/60/90 day buckets
+- **Sales Tax** — Tax collected by invoice with taxable/non-taxable breakdowns
+- **General Ledger** — All journal entries grouped by account with debit/credit totals
+- **Income by Customer** — Sales totals per customer with invoice counts
+- **Customer Statements** — PDF statement with invoice/payment history and running balance
+
+### Company Settings
+- Company name, address, phone, email, tax ID
+- Default terms, tax rate, invoice/estimate numbering
+- Default invoice notes and footer text
 
 ### UI
-
 - Authentic QB2003 "Default Blue" skin with navy/gold color palette
-- Splash screen with build info on launch
+- Splash screen with build info and decompilation provenance
 - Windows XP-era toolbar, sidebar navigator with icons, status bar
-- Tahoma font, sunken input fields, gradient buttons, alternating row colors
+- Global search bar (searches customers and invoices live)
+- Keyboard shortcuts: `Alt+N` (new invoice), `Alt+P` (payment), `Alt+Q` (quick entry), `Alt+H` (home), `Ctrl+K` (search), `Escape` (close modal)
 - No frameworks — vanilla HTML/CSS/JS single-page app
+- Dashboard with receivables, overdue count, recent invoices/payments, bank balances
+
+### Utilities
+- **Backup Script** — `scripts/backup.sh` — pg_dump with gzip compression, keeps last 30 backups
 
 ---
 
@@ -52,7 +79,8 @@ The codebase is annotated with "decompilation" comments referencing `QBW32.EXE` 
 | Database | PostgreSQL 16 + SQLAlchemy 2.0 |
 | Migrations | Alembic |
 | Frontend | Vanilla HTML/CSS/JS (no framework) |
-| PDF (planned) | WeasyPrint + Jinja2 |
+| PDF | WeasyPrint 60.2 + Jinja2 |
+| Port | 3001 |
 
 ---
 
@@ -90,6 +118,14 @@ python3 run.py
 
 Open **http://localhost:3001** in your browser.
 
+### Backup
+
+```bash
+./scripts/backup.sh
+# Backs up to ~/bookkeeper-backups/ with gzip compression
+# Keeps the 30 most recent backups
+```
+
 ---
 
 ## Project Structure
@@ -105,7 +141,7 @@ SlowBooks-Pro-2026/
 │   ├── main.py               # FastAPI app + router mounting
 │   ├── config.py             # Environment-based settings
 │   ├── database.py           # SQLAlchemy engine + session
-│   ├── models/               # 13 SQLAlchemy models
+│   ├── models/               # 14 SQLAlchemy models
 │   │   ├── accounts.py       # Chart of Accounts (self-referencing)
 │   │   ├── contacts.py       # Customers + Vendors
 │   │   ├── items.py          # Products, services, materials, labor
@@ -113,17 +149,24 @@ SlowBooks-Pro-2026/
 │   │   ├── estimates.py      # Estimates + line items
 │   │   ├── payments.py       # Payments + allocations
 │   │   ├── transactions.py   # Journal entries (double-entry core)
-│   │   └── banking.py        # Bank accounts, transactions, reconciliations
+│   │   ├── banking.py        # Bank accounts, transactions, reconciliations
+│   │   └── settings.py       # Key-value company settings
 │   ├── schemas/              # Pydantic request/response models
 │   ├── routes/               # FastAPI routers (one per resource)
-│   ├── services/             # Business logic (planned)
-│   ├── templates/            # Jinja2 PDF templates (planned)
+│   ├── services/
+│   │   ├── accounting.py     # Double-entry journal entry engine
+│   │   └── pdf_service.py    # WeasyPrint PDF generation
+│   ├── templates/
+│   │   ├── invoice_pdf.html  # Invoice PDF layout
+│   │   ├── estimate_pdf.html # Estimate PDF layout
+│   │   └── statement_pdf.html # Customer statement PDF layout
 │   ├── seed/                 # Chart of Accounts seed data
 │   └── static/
 │       ├── css/style.css     # QB2003 "Default Blue" skin
-│       └── js/               # SPA router, API wrapper, page modules
+│       └── js/               # SPA router, API wrapper, 12 page modules
 ├── scripts/
-│   └── seed_database.py      # Seed the Chart of Accounts
+│   ├── seed_database.py      # Seed the Chart of Accounts
+│   └── backup.sh             # PostgreSQL backup with rotation
 ├── screenshots/              # README images
 └── index.html                # SPA shell
 ```
@@ -147,49 +190,48 @@ SlowBooks-Pro-2026/
 | `payments` | Payment records |
 | `payment_allocations` | Maps payments to invoices (many-to-many) |
 | `transactions` | Journal entry headers |
-| `transaction_lines` | Journal entry splits (debit OR credit, enforced by CHECK constraint) |
+| `transaction_lines` | Journal entry splits (debit OR credit, enforced by CHECK) |
 | `bank_accounts` | Bank accounts linked to COA |
 | `bank_transactions` | Bank register entries |
 | `reconciliations` | Bank reconciliation sessions |
+| `settings` | Company settings key-value store |
 
 ---
 
 ## API
 
-All endpoints under `/api/`. Full Swagger docs at `/docs`.
+All endpoints under `/api/`. Swagger docs at `/docs`.
 
 | Endpoint | Methods | Description |
 |----------|---------|-------------|
 | `/api/dashboard` | GET | Company snapshot stats |
+| `/api/settings` | GET, PUT | Company settings |
 | `/api/accounts` | GET, POST, PUT, DELETE | Chart of Accounts CRUD |
 | `/api/customers` | GET, POST, PUT, DELETE | Customer management |
 | `/api/vendors` | GET, POST, PUT, DELETE | Vendor management |
 | `/api/items` | GET, POST, PUT, DELETE | Items & services |
 | `/api/invoices` | GET, POST, PUT | Invoice CRUD with line items |
-| `/api/invoices/{id}/void` | POST | Void an invoice |
+| `/api/invoices/{id}/pdf` | GET | Generate invoice PDF |
+| `/api/invoices/{id}/void` | POST | Void with reversing journal entry |
+| `/api/invoices/{id}/send` | POST | Mark invoice as sent |
+| `/api/invoices/{id}/duplicate` | POST | Duplicate invoice as new draft |
 | `/api/estimates` | GET, POST, PUT | Estimate CRUD with line items |
+| `/api/estimates/{id}/pdf` | GET | Generate estimate PDF |
+| `/api/estimates/{id}/convert` | POST | Convert estimate to invoice |
 | `/api/payments` | GET, POST | Record payments with invoice allocation |
 | `/api/banking/accounts` | GET, POST, PUT | Bank account management |
 | `/api/banking/transactions` | GET, POST | Bank register entries |
+| `/api/banking/reconciliations` | GET, POST | Reconciliation sessions |
+| `/api/banking/reconciliations/{id}/transactions` | GET | Transactions for reconciliation |
+| `/api/banking/reconciliations/{id}/toggle/{txn}` | POST | Toggle cleared status |
+| `/api/banking/reconciliations/{id}/complete` | POST | Complete reconciliation |
 | `/api/reports/profit-loss` | GET | P&L report |
 | `/api/reports/balance-sheet` | GET | Balance sheet |
 | `/api/reports/ar-aging` | GET | Accounts receivable aging |
-
----
-
-## Roadmap
-
-- [ ] PDF invoice/estimate generation (WeasyPrint)
-- [ ] Estimate-to-invoice conversion
-- [ ] Bank reconciliation workflow
-- [ ] Customer statements
-- [ ] Sales tax reporting
-- [ ] General ledger report
-- [ ] Income by customer report
-- [ ] Global search
-- [ ] Quick-entry mode for batch invoice entry
-- [ ] Company settings page
-- [ ] Backup script (pg_dump)
+| `/api/reports/sales-tax` | GET | Sales tax collected |
+| `/api/reports/general-ledger` | GET | All journal entries by account |
+| `/api/reports/income-by-customer` | GET | Sales totals per customer |
+| `/api/reports/customer-statement/{id}/pdf` | GET | Customer statement PDF |
 
 ---
 
