@@ -23,7 +23,7 @@ from fastapi.responses import FileResponse
 
 from app.routes import (
     dashboard, accounts, customers, vendors, items,
-    invoices, estimates, payments, banking, reports, settings,
+    invoices, estimates, payments, banking, reports, settings, iif,
 )
 
 app = FastAPI(title="Slowbooks Pro 2026", version="1.0.0")
@@ -48,6 +48,7 @@ app.include_router(payments.router)
 app.include_router(banking.router)
 app.include_router(reports.router)
 app.include_router(settings.router)
+app.include_router(iif.router)
 
 # Static files
 static_dir = Path(__file__).parent / "static"

@@ -19,6 +19,7 @@ const App = {
         '/accounts':  { page: 'accounts',  label: 'Chart of Accounts',render: () => App.renderAccounts() },
         '/reports':   { page: 'reports',   label: 'Report Center',    render: () => ReportsPage.render() },
         '/settings':  { page: 'settings', label: 'Company Settings', render: () => SettingsPage.render() },
+        '/iif':       { page: 'iif',      label: 'QuickBooks Interop', render: () => IIFPage.render() },
         '/quick-entry': { page: 'quick-entry', label: 'Quick Entry', render: () => App.renderQuickEntry() },
     },
 

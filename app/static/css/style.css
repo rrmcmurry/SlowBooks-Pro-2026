@@ -1045,3 +1045,194 @@ tr.clickable { cursor: pointer; }
     background: white;
     padding: 4px 8px;
 }
+
+/* ========================================================================
+ * IIF IMPORT/EXPORT — QuickBooks 2003 Pro Interoperability
+ * File > Utilities > Import/Export IIF Files
+ * ======================================================================== */
+
+.iif-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.iif-section {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    padding: 16px;
+}
+
+.iif-section h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--qb-navy);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--panel-border);
+}
+
+.iif-export-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.iif-export-grid .btn {
+    justify-content: center;
+    text-align: center;
+    padding: 6px 10px;
+}
+
+.iif-date-range {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+    font-size: 11px;
+}
+
+.iif-date-range label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.iif-date-range input {
+    padding: 3px 6px;
+    border: 1px solid var(--input-border);
+    border-radius: 0;
+    font-size: 11px;
+    font-family: var(--font);
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.08);
+}
+
+.iif-dropzone {
+    border: 2px dashed var(--input-border);
+    border-radius: 3px;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #fafbfc;
+    margin-bottom: 12px;
+}
+
+.iif-dropzone:hover,
+.iif-dropzone.dragover {
+    border-color: var(--qb-blue);
+    background: #f0f4fa;
+}
+
+.iif-dropzone-icon {
+    font-size: 28px;
+    color: var(--qb-blue);
+    margin-bottom: 6px;
+}
+
+.iif-dropzone-text {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.iif-dropzone-text strong {
+    color: var(--qb-blue);
+}
+
+.iif-file-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #f0f4fa;
+    border: 1px solid var(--qb-blue);
+    margin-bottom: 12px;
+    font-size: 11px;
+}
+
+.iif-file-info .filename {
+    font-weight: 700;
+    color: var(--qb-navy);
+    flex: 1;
+}
+
+.iif-file-info .filesize {
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+.iif-import-actions {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.iif-results {
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    padding: 12px;
+    font-size: 11px;
+}
+
+.iif-results h4 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--qb-navy);
+    margin-bottom: 8px;
+}
+
+.iif-results .result-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 1px solid #e8ecf0;
+}
+
+.iif-results .result-row:last-child {
+    border-bottom: none;
+}
+
+.iif-results .result-count {
+    font-weight: 700;
+    font-family: var(--font-mono);
+}
+
+.iif-validation-ok {
+    color: var(--qb-green);
+    font-weight: 700;
+}
+
+.iif-validation-err {
+    color: var(--qb-red);
+    font-weight: 700;
+}
+
+.iif-validation-warn {
+    color: var(--qb-orange);
+}
+
+.iif-errors {
+    margin-top: 8px;
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    background: #fff8f8;
+    border: 1px solid #fca5a5;
+    padding: 6px 8px;
+    color: var(--qb-red);
+}
+
+.iif-warnings {
+    margin-top: 8px;
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    background: #fffbf0;
+    border: 1px solid #fbbf24;
+    padding: 6px 8px;
+    color: var(--qb-orange);
+}

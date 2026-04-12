@@ -66,8 +66,16 @@ The codebase is annotated with "decompilation" comments referencing `QBW32.EXE` 
 - No frameworks — vanilla HTML/CSS/JS single-page app
 - Dashboard with receivables, overdue count, recent invoices/payments, bank balances
 
+### QuickBooks 2003 Pro Interoperability
+- **IIF Export** — Export all Slowbooks data (accounts, customers, vendors, items, invoices, payments, estimates) as .iif files importable into QB2003 via File > Utilities > Import > IIF Files
+- **IIF Import** — Parse and import .iif files exported from QB2003 with duplicate detection and per-row error handling
+- **Validation** — Pre-flight validation of .iif files before import (checks structure, account types, balanced transactions)
+- **Date Range Filtering** — Export invoices and payments for specific date ranges
+- **Round-Trip Safe** — Export from Slowbooks, re-import into Slowbooks — deduplication prevents double-entry
+
 ### Utilities
 - **Backup Script** — `scripts/backup.sh` — pg_dump with gzip compression, keeps last 30 backups
+- **IRS Mock Data** — `scripts/seed_irs_mock_data.py` — Seeds realistic test data from IRS Publication 583 (Henry Brown's Auto Body Shop: 8 customers, 13 vendors, 10 invoices, 5 payments, 3 estimates)
 
 ---
 
@@ -155,6 +163,8 @@ SlowBooks-Pro-2026/
 │   ├── routes/               # FastAPI routers (one per resource)
 │   ├── services/
 │   │   ├── accounting.py     # Double-entry journal entry engine
+│   │   ├── iif_export.py     # IIF export (8 export functions)
+│   │   ├── iif_import.py     # IIF parser + import + validation
 │   │   └── pdf_service.py    # WeasyPrint PDF generation
 │   ├── templates/
 │   │   ├── invoice_pdf.html  # Invoice PDF layout
@@ -166,6 +176,7 @@ SlowBooks-Pro-2026/
 │       └── js/               # SPA router, API wrapper, 12 page modules
 ├── scripts/
 │   ├── seed_database.py      # Seed the Chart of Accounts
+│   ├── seed_irs_mock_data.py # IRS Pub 583 mock data (Henry Brown's Auto Body Shop)
 │   └── backup.sh             # PostgreSQL backup with rotation
 ├── screenshots/              # README images
 └── index.html                # SPA shell
@@ -232,6 +243,10 @@ All endpoints under `/api/`. Swagger docs at `/docs`.
 | `/api/reports/general-ledger` | GET | All journal entries by account |
 | `/api/reports/income-by-customer` | GET | Sales totals per customer |
 | `/api/reports/customer-statement/{id}/pdf` | GET | Customer statement PDF |
+| `/api/iif/export/all` | GET | Export everything as single .iif file |
+| `/api/iif/export/{section}` | GET | Export accounts, customers, vendors, items, invoices, payments, or estimates |
+| `/api/iif/import` | POST | Upload and import .iif file |
+| `/api/iif/validate` | POST | Validate .iif file without importing |
 
 ---
 
