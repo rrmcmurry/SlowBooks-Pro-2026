@@ -132,37 +132,36 @@ The codebase is annotated with "decompilation" comments referencing `QBW32.EXE` 
 
 ## Quick Start
 
-### Prerequisites
-
-- Python 3.10+
-- PostgreSQL 12+ (running)
-
-### Install
+### Docker (Windows, macOS, Linux)
 
 ```bash
 git clone https://github.com/VonHoltenCodes/SlowBooks-Pro-2026.git
 cd SlowBooks-Pro-2026
+docker compose up
+```
 
-# Install dependencies
+Open **http://localhost:3001**. That's it — PostgreSQL, migrations, and seed data are handled automatically.
+
+### Native Install (Linux)
+
+```bash
+git clone https://github.com/VonHoltenCodes/SlowBooks-Pro-2026.git
+cd SlowBooks-Pro-2026
 pip install -r requirements.txt
 
 # Create database
 sudo -u postgres psql -c "CREATE USER bookkeeper WITH PASSWORD 'bookkeeper'"
 sudo -u postgres psql -c "CREATE DATABASE bookkeeper OWNER bookkeeper"
 
-# Copy and edit config
 cp .env.example .env
-# Edit .env if your PostgreSQL setup differs
-
-# Run migrations and seed Chart of Accounts
 alembic upgrade head
 python3 scripts/seed_database.py
-
-# Start the app
 python3 run.py
 ```
 
-Open **http://localhost:3001** in your browser.
+Open **http://localhost:3001**.
+
+See **[INSTALL.md](INSTALL.md)** for detailed instructions, macOS native install, demo data, and troubleshooting.
 
 ### Backup
 

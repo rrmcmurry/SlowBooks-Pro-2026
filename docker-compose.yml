@@ -1,0 +1,48 @@
+# ============================================================================
+# Slowbooks Pro 2026 — Docker Compose
+# Usage: docker compose up
+# ============================================================================
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bookkeeper}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bookkeeper}
+      POSTGRES_DB: ${POSTGRES_DB:-bookkeeper}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bookkeeper}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+
+  slowbooks:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bookkeeper}:${POSTGRES_PASSWORD:-bookkeeper}@postgres:5432/${POSTGRES_DB:-bookkeeper}
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGUSER: ${POSTGRES_USER:-bookkeeper}
+      PGPASSWORD: ${POSTGRES_PASSWORD:-bookkeeper}
+      APP_HOST: "0.0.0.0"
+      APP_PORT: "3001"
+      APP_DEBUG: "${APP_DEBUG:-false}"
+    ports:
+      - "${APP_PORT:-3001}:3001"
+    volumes:
+      - slowbooks_uploads:/app/app/static/uploads
+      - slowbooks_backups:/app/backups
+
+volumes:
+  postgres_data:
+  slowbooks_uploads:
+  slowbooks_backups:
