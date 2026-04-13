@@ -2,7 +2,9 @@
 
 **A personal bookkeeping application "decompiled" from the ashes of QuickBooks 2003 Pro.**
 
-Free and open source. Runs on Linux and Windows. No Intuit activation servers required.
+Free and open source. Runs on Windows, macOS, and Linux. No Intuit activation servers required.
+
+**Get started:** `docker compose up` — see **[INSTALL.md](INSTALL.md)** for all install options.
 
 ![Slowbooks Pro 2026 — Splash Screen](screenshots/splash.png)
 
